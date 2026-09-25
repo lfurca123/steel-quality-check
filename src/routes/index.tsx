@@ -123,7 +123,7 @@ function App() {
       </Step>
     );
   } else if (screen === "measure" && canInspect) {
-    const p = pieces[idx];
+    const p = pieces[idx]!;
     const ok = validMeasure(p.f1) && validMeasure(p.f2);
     body = (
       <Step
