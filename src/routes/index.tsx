@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { loginWithPin, saveSkoInspections, searchInspections } from "@/lib/qc.functions";
 import {
   F1_MAX,
@@ -106,16 +106,24 @@ function App() {
       <Step title="Numery produktów SKO" onBack={() => setScreen("product")}>
         <div className="flex flex-col gap-3">
           {pieces.map((p, i) => (
-            <label key={i} className="flex flex-col gap-1">
+            <div key={i} className="flex flex-col gap-1">
               <span className="text-sm font-semibold">Sztuka {i + 1}</span>
-              <input
-                className="h-14 rounded-md border border-input bg-card px-4 text-lg"
-                placeholder={`SKO-0010${i + 1}`}
-                value={p.number}
-                maxLength={50}
-                onChange={(e) => update(i, { number: e.target.value.toUpperCase() })}
-              />
-            </label>
+              <div className="flex gap-2">
+                <input
+                  className="h-14 flex-1 rounded-md border border-input bg-card px-4 text-lg"
+                  placeholder={`SKO-0010${i + 1}`}
+                  value={p.number}
+                  maxLength={50}
+                  onChange={(e) => update(i, { number: e.target.value.toUpperCase() })}
+                />
+                <button
+                  onClick={() => setScanIdx(i)}
+                  className="h-14 rounded-md bg-secondary px-4 text-sm font-bold text-secondary-foreground"
+                >
+                  📷 Skanuj
+                </button>
+              </div>
+            </div>
           ))}
           {dup && <p className="text-sm text-nok">Numery nie mogą się powtarzać.</p>}
           <BigBtn disabled={!ok} onClick={() => { setIdx(0); setScreen("measure"); }}>DALEJ</BigBtn>
