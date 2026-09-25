@@ -55,6 +55,7 @@ function App() {
   const [idx, setIdx] = useState(0);
   const [saved, setSaved] = useState<{ product_number: string; final_result: string }[]>([]);
   const [detail, setDetail] = useState<Inspection | null>(null);
+  const [scanIdx, setScanIdx] = useState<number | null>(null);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -225,6 +226,12 @@ function App() {
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-4 py-6">{body}</main>
+      {scanIdx !== null && (
+        <Scanner
+          onClose={() => setScanIdx(null)}
+          onConfirm={(num) => { update(scanIdx, { number: num }); setScanIdx(null); }}
+        />
+      )}
     </div>
   );
 }
