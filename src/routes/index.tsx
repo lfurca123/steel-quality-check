@@ -512,6 +512,110 @@ function Search({ user, onBack, onOpen }: { user: User; onBack: () => void; onOp
   );
 }
 
+function Scanner({ onClose, onConfirm }: { onClose: () => void; onConfirm: (num: string) => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [phase, setPhase] = useState<"camera" | "reading" | "confirm">("camera");
+  const [read, setRead] = useState("");
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" }, audio: false })
+      .then((stream) => {
+        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+      })
+      .catch(() => setErr("Brak dostępu do aparatu. Sprawdź uprawnienia przeglądarki."));
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+
+  const capture = async () => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) return;
+    setPhase("reading");
+    setErr("");
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d")!.drawImage(video, 0, 0);
+      const { createWorker } = await import("tesseract.js");
+      const worker = await createWorker("eng");
+      await worker.setParameters({
+        tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-",
+      });
+      const { data } = await worker.recognize(canvas);
+      await worker.terminate();
+      const text = data.text.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      const match = text.match(/[A-Z0-9][A-Z0-9-]{2,}/);
+      if (!match) {
+        setErr("Nie udało się odczytać numeru. Spróbuj ponownie.");
+        setPhase("camera");
+        return;
+      }
+      setRead(match[0]);
+      setPhase("confirm");
+    } catch {
+      setErr("Błąd odczytu. Spróbuj ponownie.");
+      setPhase("camera");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-secondary text-secondary-foreground">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-xl font-bold">Skanuj numer</h2>
+          <button onClick={onClose} className="rounded-md border border-secondary-foreground/30 px-3 py-2 text-sm">
+            Anuluj
+          </button>
+        </div>
+        {phase === "confirm" ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+            <p className="text-sm opacity-80">ODCZYTANO NUMER:</p>
+            <p className="rounded-md bg-secondary-foreground/10 px-6 py-4 font-display text-3xl font-bold tracking-widest">
+              {read}
+            </p>
+            <p className="text-sm opacity-80">Czy numer jest prawidłowy?</p>
+            <div className="grid w-full grid-cols-2 gap-3">
+              <button
+                onClick={() => setPhase("camera")}
+                className="h-16 rounded-md bg-nok font-display text-xl font-bold text-nok-foreground"
+              >
+                NIE / Popraw
+              </button>
+              <button
+                onClick={() => onConfirm(read)}
+                className="h-16 rounded-md bg-ok font-display text-xl font-bold text-ok-foreground"
+              >
+                TAK / Zatwierdź
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <video ref={videoRef} autoPlay playsInline muted className="w-full rounded-md bg-black" />
+            {err && <p className="mt-3 text-sm text-nok">{err}</p>}
+            <button
+              onClick={capture}
+              disabled={phase === "reading"}
+              className="mt-4 h-16 w-full rounded-md bg-primary font-display text-xl font-bold text-primary-foreground disabled:opacity-40"
+            >
+              {phase === "reading" ? "ODCZYTYWANIE…" : "ODCZYTAJ NUMER"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Detail({ r, onBack }: { r: Inspection; onBack: () => void }) {
   const items: [string, ReactNode][] = [
     ["Produkt", r.product],
