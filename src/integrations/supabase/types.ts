@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      employees: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          pin: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          pin: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          pin?: string
+        }
+        Relationships: []
+      }
+      inspections: {
+        Row: {
+          f1_result: string
+          f1_value: number
+          f2_result: string
+          f2_value: number
+          f3_result: string
+          final_result: string
+          id: string
+          inspected_at: string
+          inspector_id: string | null
+          inspector_name: string
+          product: string
+          product_number: string
+          shift: string
+          zgodne: string
+        }
+        Insert: {
+          f1_result: string
+          f1_value: number
+          f2_result: string
+          f2_value: number
+          f3_result: string
+          final_result: string
+          id?: string
+          inspected_at?: string
+          inspector_id?: string | null
+          inspector_name: string
+          product?: string
+          product_number: string
+          shift: string
+          zgodne: string
+        }
+        Update: {
+          f1_result?: string
+          f1_value?: number
+          f2_result?: string
+          f2_value?: number
+          f3_result?: string
+          final_result?: string
+          id?: string
+          inspected_at?: string
+          inspector_id?: string | null
+          inspector_name?: string
+          product?: string
+          product_number?: string
+          shift?: string
+          zgodne?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspections_inspector_id_fkey"
+            columns: ["inspector_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
