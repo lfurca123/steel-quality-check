@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.4",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://fscraqkudpfjugkdkfik.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "steel-quality-check",
+      "version": "0.1.0",
+      "title": "Steel Quality Check"
+    },
+    "tools": [
+      {
+        "name": "search_inspections",
+        "title": "Wyszukaj kontrole",
+        "description": "Search saved SKO quality inspections by (partial) product number; without a query returns the latest ones.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Part of product number, e.g. 00103.",
+              "type": "string",
+              "maxLength": 50
+            },
+            "limit": {
+              "description": "Max results (default 10).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

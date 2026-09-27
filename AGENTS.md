@@ -8,3 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+- MCP server lives in src/lib/mcp (read-only tools, Supabase OAuth); inspections readable only by accounts with viewer/admin role in user_roles — keeps AI access least-privilege.
