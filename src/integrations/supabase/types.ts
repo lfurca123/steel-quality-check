@@ -94,6 +94,68 @@ export type Database = {
           },
         ]
       }
+      sko_inspections: {
+        Row: {
+          created_at: string
+          f1_result: string
+          f1_value: number
+          f2_result: string
+          f2_value: number
+          f3_result: string
+          final_result: string
+          id: string
+          inspected_at: string
+          inspector_id: string | null
+          inspector_name: string
+          product: string
+          product_number: string
+          shift: string
+          zgodne: string
+        }
+        Insert: {
+          created_at?: string
+          f1_result: string
+          f1_value: number
+          f2_result: string
+          f2_value: number
+          f3_result: string
+          final_result: string
+          id?: string
+          inspected_at?: string
+          inspector_id?: string | null
+          inspector_name: string
+          product?: string
+          product_number: string
+          shift: string
+          zgodne: string
+        }
+        Update: {
+          created_at?: string
+          f1_result?: string
+          f1_value?: number
+          f2_result?: string
+          f2_value?: number
+          f3_result?: string
+          final_result?: string
+          id?: string
+          inspected_at?: string
+          inspector_id?: string | null
+          inspector_name?: string
+          product?: string
+          product_number?: string
+          shift?: string
+          zgodne?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sko_inspections_inspector_id_fkey"
+            columns: ["inspector_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
