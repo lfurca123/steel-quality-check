@@ -37,10 +37,13 @@ const emptyPieces = (): Piece[] =>
 const parseNum = (s: string) => Number(s.replace(",", "."));
 const validMeasure = (s: string) => /^\d{1,3}([.,]\d)?$/.test(s.trim());
 
+// Widok mobilny (pełna kontrola) decyduje się po szerokości ekranu,
+// nie po typie wskaźnika — duże tablety dotykowe trafiają do PcView,
+// a telefony zawsze do formularza kontroli.
 function useIsMobile() {
   const [mobile, setMobile] = useState<boolean | null>(null);
   useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
+    const mq = window.matchMedia("(max-width: 767px)");
     const upd = () => setMobile(mq.matches);
     upd();
     mq.addEventListener("change", upd);
