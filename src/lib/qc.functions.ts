@@ -62,7 +62,7 @@ export const saveSkoInspections = createServerFn({ method: "POST" })
     });
     const db = await admin();
     const { data: saved, error } = await db
-      .from("inspections")
+      .from("sko_inspections")
       .insert(rows)
       .select("product_number, final_result");
     if (error) throw new Error("Błąd zapisu");
@@ -76,7 +76,7 @@ export const searchInspections = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     if (!(await verifyPin(data.pin))) throw new Error("Nieprawidłowy PIN");
     const db = await admin();
-    let q = db.from("inspections").select("*").order("inspected_at", { ascending: false });
+    let q = db.from("sko_inspections").select("*").order("inspected_at", { ascending: false });
     if (data.query) {
       const safe = data.query.replace(/[%_\\,()]/g, "");
       q = q.ilike("product_number", `%${safe}%`).limit(100);

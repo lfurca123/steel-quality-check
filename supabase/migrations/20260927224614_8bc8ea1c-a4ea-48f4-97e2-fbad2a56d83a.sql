@@ -1,0 +1,1 @@
+DELETE FROM public.sko_inspections WHERE product_number LIKE 'TEST-9%';
