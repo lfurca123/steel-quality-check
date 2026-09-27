@@ -15,7 +15,7 @@ export default defineTool({
   handler: async ({ query, limit }, ctx) => {
     const db = supabaseForUser(ctx);
     let q = db
-      .from("inspections")
+      .from("sko_inspections")
       .select(
         "id, product, product_number, inspected_at, shift, inspector_name, f1_value, f1_result, f2_value, f2_result, f3_result, zgodne, final_result",
       )
