@@ -12,6 +12,7 @@ import {
   type OkNok,
   type TakNie,
 } from "@/lib/qc";
+import PcView from "@/components/PcView";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,6 +71,8 @@ function App() {
   };
 
   if (!user) return <Login onLogin={(u) => { sessionStorage.setItem("qc-user", JSON.stringify(u)); setUser(u); }} />;
+
+  if (isMobile === false) return <PcView pin={user.pin} userName={user.name} onLogout={logout} />;
 
   const canInspect = isMobile === true;
   const update = (i: number, p: Partial<Piece>) =>
