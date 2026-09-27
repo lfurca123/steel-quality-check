@@ -37,10 +37,13 @@ const emptyPieces = (): Piece[] =>
 const parseNum = (s: string) => Number(s.replace(",", "."));
 const validMeasure = (s: string) => /^\d{1,3}([.,]\d)?$/.test(s.trim());
 
+// Widok mobilny (pełna kontrola) decyduje się po szerokości ekranu,
+// nie po typie wskaźnika — duże tablety dotykowe trafiają do PcView,
+// a telefony zawsze do formularza kontroli.
 function useIsMobile() {
   const [mobile, setMobile] = useState<boolean | null>(null);
   useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
+    const mq = window.matchMedia("(max-width: 767px)");
     const upd = () => setMobile(mq.matches);
     upd();
     mq.addEventListener("change", upd);
@@ -82,14 +85,16 @@ function App() {
   if (screen === "home") {
     body = (
       <div className="flex flex-col gap-4">
-        {canInspect ? (
-          <BigBtn onClick={() => { setPieces(emptyPieces()); setIdx(0); setScreen("product"); }}>NOWA KONTROLA</BigBtn>
+        {isMobile === null ? (
+          <p className="text-sm text-muted-foreground">Ładowanie…</p>
+        ) : canInspect ? (
+          <BigBtn onClick={() => { setPieces(emptyPieces()); setIdx(0); setScreen("product"); }}>+ NOWA KONTROLA</BigBtn>
         ) : (
           <p className="rounded-md border border-border bg-card p-4 text-sm text-muted-foreground">
             Widok komputerowy: dostępne jest tylko wyszukiwanie i przeglądanie kontroli.
           </p>
         )}
-        <BigBtn variant="dark" onClick={() => setScreen("search")}>WYSZUKAJ KONTROLĘ</BigBtn>
+        <BigBtn variant="dark" onClick={() => setScreen("search")}>HISTORIA / WYSZUKAJ KONTROLĘ</BigBtn>
       </div>
     );
   } else if (screen === "product" && canInspect) {
