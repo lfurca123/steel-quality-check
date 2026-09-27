@@ -85,14 +85,16 @@ function App() {
   if (screen === "home") {
     body = (
       <div className="flex flex-col gap-4">
-        {canInspect ? (
-          <BigBtn onClick={() => { setPieces(emptyPieces()); setIdx(0); setScreen("product"); }}>NOWA KONTROLA</BigBtn>
+        {isMobile === null ? (
+          <p className="text-sm text-muted-foreground">Ładowanie…</p>
+        ) : canInspect ? (
+          <BigBtn onClick={() => { setPieces(emptyPieces()); setIdx(0); setScreen("product"); }}>+ NOWA KONTROLA</BigBtn>
         ) : (
           <p className="rounded-md border border-border bg-card p-4 text-sm text-muted-foreground">
             Widok komputerowy: dostępne jest tylko wyszukiwanie i przeglądanie kontroli.
           </p>
         )}
-        <BigBtn variant="dark" onClick={() => setScreen("search")}>WYSZUKAJ KONTROLĘ</BigBtn>
+        <BigBtn variant="dark" onClick={() => setScreen("search")}>HISTORIA / WYSZUKAJ KONTROLĘ</BigBtn>
       </div>
     );
   } else if (screen === "product" && canInspect) {
