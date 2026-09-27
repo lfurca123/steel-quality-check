@@ -8,7 +8,7 @@ function safeNext(n: unknown) {
 
 export const Route = createFileRoute("/login")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s.next) }),
+  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s["next"]) }),
   head: () => ({
     meta: [
       { title: "Logowanie konta — Kontrola Jakości SKO" },
