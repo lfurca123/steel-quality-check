@@ -1,0 +1,17 @@
+{
+  "name": "Migra",
+  "short_name": "Migra",
+  "description": "System kontroli jakości konstrukcji stalowych Migra",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#10345e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
