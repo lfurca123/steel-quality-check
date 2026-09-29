@@ -1,5 +1,5 @@
 # Roadmap
 
-- [ ] Zaktualizować branding aplikacji na Migra
-- [ ] Umieścić przesłane logo w aplikacji i faviconie
-- [ ] Ujednolicić przemysłową kolorystykę interfejsu
+- [x] Zaktualizować branding aplikacji na Migra
+- [x] Umieścić przesłane logo w aplikacji i faviconie
+- [x] Ujednolicić przemysłową kolorystykę interfejsu

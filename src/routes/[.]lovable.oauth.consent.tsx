@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import MigraLogo from "@/components/MigraLogo";
 
 type OAuthResult = { data: any; error: { message: string } | null };
 const oauth = (supabase.auth as unknown as {
@@ -31,10 +32,10 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   },
   head: () => ({
     meta: [
-      { title: "Autoryzacja asystenta — Kontrola Jakości SKO" },
-      { name: "description", content: "Zatwierdź dostęp asystenta AI do danych kontroli SKO." },
-      { property: "og:title", content: "Autoryzacja asystenta — Kontrola Jakości SKO" },
-      { property: "og:description", content: "Zatwierdź dostęp asystenta AI." },
+      { title: "Autoryzacja asystenta — Migra" },
+      { name: "description", content: "Zatwierdź dostęp asystenta AI do danych kontroli jakości Migra." },
+      { property: "og:title", content: "Autoryzacja asystenta — Migra" },
+      { property: "og:description", content: "Zatwierdź dostęp asystenta AI do danych kontroli jakości Migra." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -64,7 +65,8 @@ function Consent() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6">
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 border-t-8 border-primary p-6">
+      <MigraLogo className="mb-5 h-16 w-auto self-start" />
       <h1 className="text-2xl font-bold text-foreground">Połącz {name} z kontem</h1>
       <p className="text-muted-foreground">{name} będzie mógł odczytywać zapisane kontrole jakości w Twoim imieniu (tylko odczyt).</p>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
