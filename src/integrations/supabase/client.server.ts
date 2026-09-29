@@ -121,9 +121,9 @@ function createMockServerClient() {
     from: (table: string) => {
       let currentData: MockRecord[] = [];
       if (table === "employees") {
-        currentData = [...mockEmployees];
+        currentData = [...mockEmployees] as unknown as MockRecord[];
       } else if (table === "sko_inspections" || table === "inspections") {
-        currentData = [...mockInspections];
+        currentData = [...mockInspections] as unknown as MockRecord[];
       }
 
       const builder: MockQueryBuilder = {
