@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type User = { id: string; name: string; pin: string };
+type User = { id: string; name: string; token: string; pin?: string };
 type Piece = { number: string; f1: string; f2: string; f3: OkNok | null; zgodne: TakNie | null };
 type Screen =
   | "home"
@@ -101,7 +101,8 @@ function App() {
       />
     );
 
-  if (isMobile === false) return <PcView pin={user.pin} userName={user.name} onLogout={logout} />;
+  if (isMobile === false)
+    return <PcView token={user.token} pin={user.pin} userName={user.name} onLogout={logout} />;
 
   const canInspect = isMobile === true;
   const update = (i: number, p: Partial<Piece>) =>
@@ -348,9 +349,10 @@ function Login({ onLogin }: { onLogin: (u: User) => void }) {
     setErr("");
     try {
       const r = await login({ data: { pin: p } });
-      if (r.ok) onLogin({ id: r.id, name: r.name, pin: p });
-      else {
-        setErr("Nieprawidłowy PIN");
+      if (r.ok && r.token) {
+        onLogin({ id: r.id, name: r.name, token: r.token });
+      } else {
+        setErr(r.error || "Nieprawidłowy PIN");
         setPin("");
       }
     } catch {
@@ -570,6 +572,7 @@ function Summary({
     try {
       const r = await save({
         data: {
+          token: user.token,
           pin: user.pin,
           pieces: pieces.map((p) => ({
             productNumber: p.number.trim(),
@@ -654,7 +657,9 @@ function Search({
   const run = async (query?: string) => {
     setErr("");
     try {
-      const r = await search({ data: { pin: user.pin, query: query || undefined } });
+      const r = await search({
+        data: { token: user.token, pin: user.pin, query: query || undefined },
+      });
       setRows(r);
       setLabel(query ? `Wyniki dla „${query}”` : "10 ostatnich kontroli");
     } catch {

@@ -9,11 +9,13 @@ import MigraLogo from "@/components/MigraLogo";
  * Brak dodawania, edycji i usuwania kontroli.
  */
 export default function PcView({
+  token,
   pin,
   userName,
   onLogout,
 }: {
-  pin: string;
+  token?: string;
+  pin?: string;
   userName: string;
   onLogout: () => void;
 }) {
@@ -28,7 +30,7 @@ export default function PcView({
     setErr("");
     setRows(null);
     try {
-      const r = await search({ data: { pin, query: query || undefined } });
+      const r = await search({ data: { token, pin, query: query || undefined } });
       setRows(r);
       setLabel(query ? `Wyniki dla „${query}”` : "10 ostatnich kontroli");
     } catch {
