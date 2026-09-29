@@ -2,17 +2,17 @@
 // Server-side Supabase client with service role key - bypasses RLS.
 // Use this for admin operations in server functions and server routes only.
 // For user-authenticated queries (with RLS), use the auth middleware instead.
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './types';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./types";
 
 function isNewSupabaseApiKey(value: string): boolean {
-  return value.startsWith('sb_publishable_') || value.startsWith('sb_secret_');
+  return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
 }
 
 function createSupabaseFetch(supabaseKey: string): typeof fetch {
   return (input, init) => {
     const headers = new Headers(
-      typeof Request !== 'undefined' && input instanceof Request ? input.headers : undefined,
+      typeof Request !== "undefined" && input instanceof Request ? input.headers : undefined,
     );
 
     if (init?.headers) {
@@ -20,27 +20,189 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     }
 
     // New Supabase API keys are opaque strings, not bearer JWTs.
-    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === `Bearer ${supabaseKey}`) {
-      headers.delete('Authorization');
+    if (
+      isNewSupabaseApiKey(supabaseKey) &&
+      headers.get("Authorization") === `Bearer ${supabaseKey}`
+    ) {
+      headers.delete("Authorization");
     }
 
-    headers.set('apikey', supabaseKey);
+    headers.set("apikey", supabaseKey);
     return fetch(input, { ...init, headers });
   };
 }
 
+interface EmployeeRow {
+  id: string;
+  full_name: string;
+  pin: string;
+  created_at: string;
+}
+
+interface InspectionRow {
+  id: string;
+  product: string;
+  product_number: string;
+  inspected_at: string;
+  shift: string;
+  inspector_id: string;
+  inspector_name: string;
+  f1_value: number;
+  f1_result: string;
+  f2_value: number;
+  f2_result: string;
+  f3_result: string;
+  zgodne: string;
+  final_result: string;
+  created_at?: string;
+}
+
+const mockEmployees: EmployeeRow[] = [
+  { id: "e1", full_name: "Jan Kowalski", pin: "1234", created_at: new Date().toISOString() },
+  { id: "e2", full_name: "Anna Nowak", pin: "5678", created_at: new Date().toISOString() },
+];
+
+const mockInspections: InspectionRow[] = [
+  {
+    id: "ins-01",
+    product: "SKO",
+    product_number: "00101",
+    inspected_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    shift: "1 (06:00 - 14:00)",
+    inspector_id: "e1",
+    inspector_name: "Jan Kowalski",
+    f1_value: 1.2,
+    f1_result: "OK",
+    f2_value: 3.5,
+    f2_result: "OK",
+    f3_result: "OK",
+    zgodne: "TAK",
+    final_result: "OK",
+  },
+  {
+    id: "ins-02",
+    product: "SKO",
+    product_number: "00102",
+    inspected_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    shift: "1 (06:00 - 14:00)",
+    inspector_id: "e2",
+    inspector_name: "Anna Nowak",
+    f1_value: 1.5,
+    f1_result: "OK",
+    f2_value: 4.8,
+    f2_result: "OK",
+    f3_result: "OK",
+    zgodne: "TAK",
+    final_result: "OK",
+  },
+];
+
+type MockRecord = Record<string, unknown>;
+
+interface MockQueryBuilder {
+  select: (_cols?: string) => MockQueryBuilder;
+  eq: (col: string, val: unknown) => MockQueryBuilder;
+  neq: (col: string, val: unknown) => MockQueryBuilder;
+  ilike: (col: string, pattern: string) => MockQueryBuilder;
+  order: (col: string, options?: { ascending?: boolean }) => MockQueryBuilder;
+  limit: (n: number) => MockQueryBuilder;
+  maybeSingle: () => Promise<{ data: MockRecord | null; error: null }>;
+  single: () => Promise<{ data: MockRecord | null; error: Error | null }>;
+  insert: (rows: MockRecord | MockRecord[]) => MockQueryBuilder;
+  then: <TResult1 = { data: MockRecord[]; error: null }, TResult2 = never>(
+    resolve?:
+      ((val: { data: MockRecord[]; error: null }) => TResult1 | PromiseLike<TResult1>) | null,
+    reject?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
+  ) => Promise<TResult1 | TResult2>;
+}
+
+function createMockServerClient() {
+  return {
+    from: (table: string) => {
+      let currentData: MockRecord[] = [];
+      if (table === "employees") {
+        currentData = [...mockEmployees];
+      } else if (table === "sko_inspections" || table === "inspections") {
+        currentData = [...mockInspections];
+      }
+
+      const builder: MockQueryBuilder = {
+        select: () => builder,
+        eq: (col: string, val: unknown) => {
+          currentData = currentData.filter((item) => item[col] === val);
+          return builder;
+        },
+        neq: (col: string, val: unknown) => {
+          currentData = currentData.filter((item) => item[col] !== val);
+          return builder;
+        },
+        ilike: (col: string, pattern: string) => {
+          const raw = pattern.replace(/%/g, "").toLowerCase();
+          currentData = currentData.filter((item) =>
+            String(item[col] ?? "")
+              .toLowerCase()
+              .includes(raw),
+          );
+          return builder;
+        },
+        order: (col: string, options?: { ascending?: boolean }) => {
+          const asc = options?.ascending ?? true;
+          currentData.sort((a, b) => {
+            const valA = String(a[col] ?? "");
+            const valB = String(b[col] ?? "");
+            if (valA < valB) return asc ? -1 : 1;
+            if (valA > valB) return asc ? 1 : -1;
+            return 0;
+          });
+          return builder;
+        },
+        limit: (n: number) => {
+          currentData = currentData.slice(0, n);
+          return builder;
+        },
+        maybeSingle: async () => ({
+          data: currentData[0] ?? null,
+          error: null,
+        }),
+        single: async () => ({
+          data: currentData[0] ?? null,
+          error: currentData[0] ? null : new Error("Row not found"),
+        }),
+        insert: (rows: MockRecord | MockRecord[]) => {
+          const toAdd = Array.isArray(rows) ? rows : [rows];
+          const inserted = toAdd.map((r) => {
+            const item: MockRecord = {
+              id: "ins-" + Math.random().toString(36).slice(2, 9),
+              ...r,
+            };
+            if (table === "employees") {
+              mockEmployees.push(item as unknown as EmployeeRow);
+            } else {
+              mockInspections.unshift(item as unknown as InspectionRow);
+            }
+            return item;
+          });
+          currentData = inserted;
+          return builder;
+        },
+        then: (resolve, reject) => {
+          return Promise.resolve({ data: currentData, error: null }).then(resolve, reject);
+        },
+      };
+
+      return builder;
+    },
+  } as unknown as ReturnType<typeof createClient<Database>>;
+}
+
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = process.env['SUPABASE_URL'];
-  const SUPABASE_SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'];
+  const SUPABASE_URL = process.env["SUPABASE_URL"];
+  const SUPABASE_SERVICE_ROLE_KEY =
+    process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"];
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
-      ...(!SUPABASE_SERVICE_ROLE_KEY ? ['SUPABASE_SERVICE_ROLE_KEY'] : []),
-    ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    console.warn("[AI Studio] Supabase environment variables not set — using in-memory mock store");
+    return createMockServerClient();
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -51,7 +213,7 @@ function createSupabaseAdminClient() {
       storage: undefined,
       persistSession: false,
       autoRefreshToken: false,
-    }
+    },
   });
 }
 

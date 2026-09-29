@@ -15,7 +15,11 @@ export function finalResult(f1: OkNok, f2: OkNok, f3: OkNok, zg: TakNie): OkNok 
 /** Shift from local Polish time. I: 06–14, II: 14–22, else "Poza zmianą". */
 export function shiftFor(date: Date): string {
   const hour = Number(
-    new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hour12: false, timeZone: "Europe/Warsaw" }).format(date),
+    new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      hour12: false,
+      timeZone: "Europe/Warsaw",
+    }).format(date),
   );
   if (hour >= 6 && hour < 14) return "I zmiana";
   if (hour >= 14 && hour < 22) return "II zmiana";

@@ -1,0 +1,5 @@
+{
+  "name": "Migra",
+  "description": "System kontroli jakości konstrukcji stalowych Migra",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

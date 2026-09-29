@@ -8,7 +8,15 @@ import MigraLogo from "@/components/MigraLogo";
  * Widok komputerowy — WYŁĄCZNIE do odczytu.
  * Brak dodawania, edycji i usuwania kontroli.
  */
-export default function PcView({ pin, userName, onLogout }: { pin: string; userName: string; onLogout: () => void }) {
+export default function PcView({
+  pin,
+  userName,
+  onLogout,
+}: {
+  pin: string;
+  userName: string;
+  onLogout: () => void;
+}) {
   const search = useServerFn(searchInspections);
   const [q, setQ] = useState("");
   const [rows, setRows] = useState<Inspection[] | null>(null);
@@ -29,7 +37,9 @@ export default function PcView({ pin, userName, onLogout }: { pin: string; userN
     }
   };
 
-  useEffect(() => { run(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    run();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,11 +48,18 @@ export default function PcView({ pin, userName, onLogout }: { pin: string; userN
           <div className="flex items-center gap-4">
             <MigraLogo className="h-11 w-auto" />
             <div className="border-l border-border pl-4">
-              <div className="font-display text-lg font-bold uppercase text-secondary">Kontrola jakości — przegląd</div>
-              <div className="text-xs text-muted-foreground">Zalogowany: {userName} · tryb tylko do odczytu</div>
+              <div className="font-display text-lg font-bold uppercase text-secondary">
+                Kontrola jakości — przegląd
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Zalogowany: {userName} · tryb tylko do odczytu
+              </div>
             </div>
           </div>
-          <button onClick={onLogout} className="rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold text-secondary hover:bg-muted">
+          <button
+            onClick={onLogout}
+            className="rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold text-secondary hover:bg-muted"
+          >
             Wyloguj
           </button>
         </div>
@@ -50,7 +67,13 @@ export default function PcView({ pin, userName, onLogout }: { pin: string; userN
 
       <main className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[1fr_22rem]">
         <section>
-          <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); run(q.trim()); }}>
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              run(q.trim());
+            }}
+          >
             <input
               className="h-12 flex-1 rounded-md border border-input bg-card px-4"
               placeholder="Numer produktu, np. 00103"
@@ -89,11 +112,15 @@ export default function PcView({ pin, userName, onLogout }: { pin: string; userN
                       onClick={() => setSelected(r)}
                       className={`cursor-pointer border-t border-border bg-card hover:bg-muted ${selected?.id === r.id ? "bg-muted" : ""}`}
                     >
-                      <td className="px-4 py-2 text-muted-foreground">{formatDate(r.inspected_at)}</td>
+                      <td className="px-4 py-2 text-muted-foreground">
+                        {formatDate(r.inspected_at)}
+                      </td>
                       <td className="px-4 py-2 font-semibold">{r.product_number}</td>
                       <td className="px-4 py-2">{r.shift}</td>
                       <td className="px-4 py-2">{r.inspector_name}</td>
-                      <td className="px-4 py-2"><Badge value={r.final_result} /></td>
+                      <td className="px-4 py-2">
+                        <Badge value={r.final_result} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -131,8 +158,18 @@ function details(r: Inspection): [string, React.ReactNode][] {
     ["Data", formatDate(r.inspected_at)],
     ["Zmiana", r.shift],
     ["Kontroler", r.inspector_name],
-    ["F1", <span key="f1" className="flex items-center justify-end gap-2">{Number(r.f1_value).toFixed(1)} mm <Badge value={r.f1_result} /></span>],
-    ["F2", <span key="f2" className="flex items-center justify-end gap-2">{Number(r.f2_value).toFixed(1)} mm <Badge value={r.f2_result} /></span>],
+    [
+      "F1",
+      <span key="f1" className="flex items-center justify-end gap-2">
+        {Number(r.f1_value).toFixed(1)} mm <Badge value={r.f1_result} />
+      </span>,
+    ],
+    [
+      "F2",
+      <span key="f2" className="flex items-center justify-end gap-2">
+        {Number(r.f2_value).toFixed(1)} mm <Badge value={r.f2_result} />
+      </span>,
+    ],
     ["F3", <Badge key="f3" value={r.f3_result} />],
     ["Zgodne", <Badge key="z" value={r.zgodne} />],
     ["Wynik końcowy", <Badge key="w" value={r.final_result} />],
@@ -142,7 +179,9 @@ function details(r: Inspection): [string, React.ReactNode][] {
 function Badge({ value }: { value: string }) {
   const good = value === "OK" || value === "TAK";
   return (
-    <span className={`inline-block min-w-12 rounded px-2 py-1 text-center text-xs font-bold ${good ? "bg-ok text-ok-foreground" : "bg-nok text-nok-foreground"}`}>
+    <span
+      className={`inline-block min-w-12 rounded px-2 py-1 text-center text-xs font-bold ${good ? "bg-ok text-ok-foreground" : "bg-nok text-nok-foreground"}`}
+    >
       {value}
     </span>
   );

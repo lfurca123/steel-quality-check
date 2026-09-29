@@ -79,6 +79,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Migra" },
       { name: "description", content: "System kontroli jakości konstrukcji stalowych Migra" },
+      { property: "og:title", content: "Migra" },
+      {
+        property: "og:description",
+        content: "System kontroli jakości konstrukcji stalowych Migra",
+      },
       { name: "application-name", content: "Migra" },
       { name: "theme-color", content: "#10345e" },
       { property: "og:type", content: "website" },

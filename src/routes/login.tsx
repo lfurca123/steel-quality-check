@@ -15,7 +15,10 @@ export const Route = createFileRoute("/login")({
       { title: "Logowanie — Migra" },
       { name: "description", content: "Logowanie do systemu kontroli jakości Migra." },
       { property: "og:title", content: "Logowanie — Migra" },
-      { property: "og:description", content: "Połącz asystenta AI z danymi kontroli jakości Migra." },
+      {
+        property: "og:description",
+        content: "Połącz asystenta AI z danymi kontroli jakości Migra.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -62,17 +65,47 @@ function Login() {
         Konto służy do połączenia asystenta AI z danymi kontroli (tylko odczyt).
       </p>
       <form onSubmit={submit} className="flex flex-col gap-3">
-        <input className="rounded-md border border-input bg-background p-3 text-foreground" type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input className="rounded-md border border-input bg-background p-3 text-foreground" type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-        <button disabled={busy} className="rounded-md bg-primary p-3 font-semibold text-primary-foreground">
+        <input
+          className="rounded-md border border-input bg-background p-3 text-foreground"
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          className="rounded-md border border-input bg-background p-3 text-foreground"
+          type="password"
+          placeholder="Hasło"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+        <button
+          disabled={busy}
+          className="rounded-md bg-primary p-3 font-semibold text-primary-foreground"
+        >
           {mode === "in" ? "Zaloguj" : "Zarejestruj"}
         </button>
       </form>
-      {msg && <p role="alert" className="text-sm text-foreground">{msg}</p>}
-      <button className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+      {msg && (
+        <p role="alert" className="text-sm text-foreground">
+          {msg}
+        </p>
+      )}
+      <button
+        className="text-sm text-muted-foreground underline"
+        onClick={() => setMode(mode === "in" ? "up" : "in")}
+      >
         {mode === "in" ? "Nie masz konta? Zarejestruj się" : "Masz konto? Zaloguj się"}
       </button>
-      <button className="text-sm text-muted-foreground underline" onClick={() => navigate({ to: "/" })}>Wróć</button>
+      <button
+        className="text-sm text-muted-foreground underline"
+        onClick={() => navigate({ to: "/" })}
+      >
+        Wróć
+      </button>
     </main>
   );
 }
