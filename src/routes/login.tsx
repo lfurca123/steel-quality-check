@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import MigraLogo from "@/components/MigraLogo";
 
 function safeNext(n: unknown) {
   return typeof n === "string" && n.startsWith("/") && !n.startsWith("//") ? n : "/";
@@ -11,10 +12,10 @@ export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s["next"]) }),
   head: () => ({
     meta: [
-      { title: "Logowanie konta — Kontrola Jakości SKO" },
-      { name: "description", content: "Logowanie konta do połączenia asystenta AI z danymi kontroli SKO." },
-      { property: "og:title", content: "Logowanie konta — Kontrola Jakości SKO" },
-      { property: "og:description", content: "Połącz asystenta AI z danymi kontroli SKO." },
+      { title: "Logowanie — Migra" },
+      { name: "description", content: "Logowanie do systemu kontroli jakości Migra." },
+      { property: "og:title", content: "Logowanie — Migra" },
+      { property: "og:description", content: "Połącz asystenta AI z danymi kontroli jakości Migra." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -52,7 +53,8 @@ function Login() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6">
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 border-t-8 border-primary p-6">
+      <MigraLogo className="mb-5 h-16 w-auto self-start" />
       <h1 className="text-2xl font-bold text-foreground">
         {mode === "in" ? "Zaloguj się" : "Utwórz konto"}
       </h1>

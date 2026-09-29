@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { searchInspections } from "@/lib/qc.functions";
 import { formatDate, type Inspection } from "@/lib/qc";
+import MigraLogo from "@/components/MigraLogo";
 
 /**
  * Widok komputerowy — WYŁĄCZNIE do odczytu.
@@ -32,15 +33,16 @@ export default function PcView({ pin, userName, onLogout }: { pin: string; userN
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-secondary text-secondary-foreground">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <div>
-            <div className="font-display text-xl font-bold tracking-wide">
-              <span className="text-primary">■</span> KONTROLA JAKOŚCI — PRZEGLĄD
+      <header className="border-b border-border bg-card shadow-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-3">
+          <div className="flex items-center gap-4">
+            <MigraLogo className="h-11 w-auto" />
+            <div className="border-l border-border pl-4">
+              <div className="font-display text-lg font-bold uppercase text-secondary">Kontrola jakości — przegląd</div>
+              <div className="text-xs text-muted-foreground">Zalogowany: {userName} · tryb tylko do odczytu</div>
             </div>
-            <div className="text-xs opacity-80">Zalogowany: {userName} · tryb tylko do odczytu</div>
           </div>
-          <button onClick={onLogout} className="rounded-md border border-secondary-foreground/30 px-3 py-2 text-sm">
+          <button onClick={onLogout} className="rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold text-secondary hover:bg-muted">
             Wyloguj
           </button>
         </div>

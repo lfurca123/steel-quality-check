@@ -13,14 +13,17 @@ import {
   type TakNie,
 } from "@/lib/qc";
 import PcView from "@/components/PcView";
+import MigraLogo from "@/components/MigraLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kontrola Jakości SKO" },
-      { name: "description", content: "Wykonywanie i wyszukiwanie kontroli jakości produktów SKO." },
-      { property: "og:title", content: "Kontrola Jakości SKO" },
-      { property: "og:description", content: "Wykonywanie i wyszukiwanie kontroli jakości produktów SKO." },
+      { title: "Migra — Kontrola jakości SKO" },
+      { name: "description", content: "System wykonywania i wyszukiwania kontroli jakości produktów SKO firmy Migra." },
+      { property: "og:title", content: "Migra — Kontrola jakości SKO" },
+      { property: "og:description", content: "System wykonywania i wyszukiwania kontroli jakości produktów SKO firmy Migra." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: App,
@@ -220,15 +223,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-secondary text-secondary-foreground">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <div>
-            <div className="font-display text-xl font-bold tracking-wide">
-              <span className="text-primary">■</span> KONTROLA JAKOŚCI
+      <header className="border-b border-border bg-card shadow-sm">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <MigraLogo className="h-10 w-auto max-w-32" />
+            <div className="min-w-0 border-l border-border pl-3">
+              <div className="font-display text-base font-bold uppercase text-secondary">Kontrola jakości</div>
+              <div className="truncate text-xs text-muted-foreground">Zalogowany: {user.name}</div>
             </div>
-            <div className="text-xs opacity-80">Zalogowany: {user.name}</div>
           </div>
-          <button onClick={logout} className="rounded-md border border-secondary-foreground/30 px-3 py-2 text-sm">
+          <button onClick={logout} className="shrink-0 rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold text-secondary hover:bg-muted">
             Wyloguj
           </button>
         </div>
@@ -272,11 +276,12 @@ function Login({ onLogin }: { onLogin: (u: User) => void }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-4 text-secondary-foreground">
-      <h1 className="font-display text-4xl font-bold tracking-wide">
-        <span className="text-primary">■</span> KONTROLA JAKOŚCI
-      </h1>
-      <p className="mt-2 opacity-80">Wpisz swój PIN</p>
+    <div className="flex min-h-screen flex-col items-center justify-center border-t-8 border-primary bg-secondary px-4 text-secondary-foreground">
+      <div className="mb-7 rounded-md bg-card px-7 py-5 shadow-xl">
+        <MigraLogo className="h-16 w-auto max-w-56" />
+      </div>
+      <h1 className="font-display text-3xl font-bold uppercase">Kontrola jakości</h1>
+      <p className="mt-2 text-secondary-foreground/75">Wpisz swój PIN</p>
       <div className="my-6 flex gap-3">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className={`h-4 w-4 rounded-full ${i < pin.length ? "bg-primary" : "bg-secondary-foreground/25"}`} />
